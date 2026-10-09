@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
-\restrict e0pkwrZSa941rQzSDxAlV6Da0Z4u3ssrjmqWhSswbfvhbbxfQidtP83SInKaflH
+\restrict lZh9eH6UGbCKiV4oRK71IRzyHmOrochJffrXgB5eQgPwNq8AhhVkUZMfyVxYcOp
 
 -- Dumped from database version 18.3 (Debian 18.3-1+b1)
 -- Dumped by pg_dump version 18.3 (Debian 18.3-1+b1)
@@ -784,13 +784,10 @@ COPY audit.audit_log (audit_log_id, staff_id, action_time, action_type, action_d
 --
 
 COPY audit.login_log (login_time, username, client_ip) FROM stdin;
-2026-09-23 12:37:29.947938	postgres	::1
-2026-09-23 12:37:57.142859	postgres	::1
-2026-09-23 12:42:54.997141	postgres	\N
-2026-09-23 12:43:19.303418	postgres	\N
-2026-09-23 12:46:13.668712	postgres	\N
-2026-09-23 12:46:16.456705	postgres	\N
-2026-09-23 12:47:01.103863	postgres	\N
+2026-10-09 06:20:58.601481	postgres	\N
+2026-10-09 06:22:26.828828	postgres	\N
+2026-10-09 06:22:29.540269	postgres	\N
+2026-10-09 06:24:33.187957	postgres	\N
 \.
 
 
@@ -1528,5 +1525,5 @@ ALTER EVENT TRIGGER login_audit_tg OWNER TO postgres;
 -- PostgreSQL database dump complete
 --
 
-\unrestrict e0pkwrZSa941rQzSDxAlV6Da0Z4u3ssrjmqWhSswbfvhbbxfQidtP83SInKaflH
+\unrestrict lZh9eH6UGbCKiV4oRK71IRzyHmOrochJffrXgB5eQgPwNq8AhhVkUZMfyVxYcOp
 
