@@ -284,8 +284,6 @@ INSERT INTO app.orders (order_id, client_id, payinfo_id, order_date, status, tot
 (9, 9, 109, '2025-11-10', 'Доставлен', 2490.00, 'Омск, ул. Ленина, д.7', '2025-11-10 18:00:00'),
 (10, 10, 110, '2025-11-11', 'В обработке', 12990.00, 'Ростов-на-Дону, ул. Большая Садовая, д.50', '2025-11-11 19:20:00');
 
--- ВНИМАНИЕ: payment_information требует pgcrypto, но карты зашифрованы (card_number, card_cvv).
--- Проще всего оставить их NULL для новых клиентов, чтобы не возиться с шифрованием.
 INSERT INTO app.payment_information (payinfo_id, client_id, method_id, card_number, card_cvv, card_expiry) VALUES
 (101, 1, 1, NULL, NULL, '2025-11-30'),
 (102, 2, 1, NULL, NULL, '2025-08-31'),
@@ -394,7 +392,7 @@ GRANT SELECT ON TABLE app.clients TO app_reader;
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE app.clients TO app_writer;
 GRANT ALL ON TABLE app.clients TO app_owner;
 GRANT SELECT ON TABLE app.clients TO auditor;
-GRANT ALL ON TABLE app.clients TO ddl_admin;
+GRANT SELECT, REFERENCES, TRIGGER ON TABLE app.clients TO ddl_admin;;
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE app.clients TO dml_admin;
 
 GRANT SELECT ON TABLE app.order_items TO app_reader;
@@ -422,7 +420,7 @@ GRANT SELECT ON TABLE app.products TO app_reader;
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE app.products TO app_writer;
 GRANT ALL ON TABLE app.products TO app_owner;
 GRANT SELECT ON TABLE app.products TO auditor;
-GRANT ALL ON TABLE app.products TO ddl_admin;
+GRANT SELECT, REFERENCES, TRIGGER ON TABLE app.products TO ddl_admin;;
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE app.products TO dml_admin;
 
 GRANT SELECT ON TABLE app.staff TO app_reader;
@@ -448,7 +446,6 @@ GRANT SELECT ON TABLE ref.product_category TO app_reader;
 GRANT SELECT ON TABLE ref.product_category TO app_writer;
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE ref.product_category TO dml_admin;
 
--- На sequences
 GRANT ALL ON SEQUENCE app.clients_id_seq TO app_writer, app_owner, ddl_admin, dml_admin;
 GRANT ALL ON SEQUENCE app.orders_order_id_seq TO app_writer, app_owner, ddl_admin, dml_admin;
 GRANT ALL ON SEQUENCE app.payment_information_info_id_seq TO app_writer, app_owner, ddl_admin, dml_admin;
