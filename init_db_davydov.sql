@@ -368,6 +368,7 @@ ALTER TABLE ONLY audit.audit_log ADD CONSTRAINT audit_log_staff_id_fkey FOREIGN 
 
 GRANT USAGE ON SCHEMA app TO app_reader;
 GRANT USAGE ON SCHEMA app TO app_writer;
+GRANT ALL ON SCHEMA app TO app_owner;
 GRANT ALL ON SCHEMA app TO ddl_admin;
 GRANT USAGE ON SCHEMA app TO dml_admin;
 GRANT USAGE ON SCHEMA app TO security_admin;
