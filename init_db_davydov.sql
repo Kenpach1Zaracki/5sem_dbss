@@ -1,18 +1,9 @@
--- ============================================================
--- Лабораторная работа №1 по БСБД
--- Студент: Давыдов (замени на своё ФИО)
--- Тема: Защита БД систем онлайн-торговли
--- ============================================================
-
 SET client_encoding = 'UTF8';
 SET standard_conforming_strings = on;
 SET check_function_bodies = false;
 SET client_min_messages = warning;
 SET row_security = off;
 
--- ============================================================
--- СХЕМЫ
--- ============================================================
 CREATE SCHEMA app;
 ALTER SCHEMA app OWNER TO postgres;
 
@@ -25,18 +16,12 @@ ALTER SCHEMA ref OWNER TO postgres;
 CREATE SCHEMA stg;
 ALTER SCHEMA stg OWNER TO postgres;
 
--- ============================================================
--- РАСШИРЕНИЯ
--- ============================================================
 CREATE EXTENSION IF NOT EXISTS pgaudit WITH SCHEMA public;
 COMMENT ON EXTENSION pgaudit IS 'provides auditing functionality';
 
 CREATE EXTENSION IF NOT EXISTS pgcrypto WITH SCHEMA public;
 COMMENT ON EXTENSION pgcrypto IS 'cryptographic functions';
 
--- ============================================================
--- ТИПЫ (ENUM)
--- ============================================================
 CREATE TYPE public.action_type_enum AS ENUM ('CREATE', 'UPDATE', 'DELETE', 'OTHER');
 ALTER TYPE public.action_type_enum OWNER TO postgres;
 
@@ -49,9 +34,6 @@ ALTER TYPE public.order_status OWNER TO postgres;
 CREATE TYPE public.staff_role AS ENUM ('Менеджер', 'Администратор', 'Бухгалтер', 'Складской');
 ALTER TYPE public.staff_role OWNER TO postgres;
 
--- ============================================================
--- ФУНКЦИИ АУДИТА
--- ============================================================
 CREATE FUNCTION audit.log_action() RETURNS trigger
     LANGUAGE plpgsql SECURITY DEFINER
     SET search_path TO 'audit', 'public'
@@ -89,10 +71,6 @@ BEGIN
 END;
 $$;
 ALTER FUNCTION audit.login_audit() OWNER TO postgres;
-
--- ============================================================
--- ТАБЛИЦЫ
--- ============================================================
 
 CREATE TABLE app.clients (
     client_id integer NOT NULL,
@@ -235,9 +213,6 @@ CREATE SEQUENCE ref.product_category_category_id_seq AS integer START WITH 1 INC
 ALTER SEQUENCE ref.product_category_category_id_seq OWNER TO postgres;
 ALTER SEQUENCE ref.product_category_category_id_seq OWNED BY ref.product_category.category_id;
 
--- ============================================================
--- DEFAULT VALUES (SERIAL)
--- ============================================================
 ALTER TABLE ONLY app.clients ALTER COLUMN client_id SET DEFAULT nextval('app.clients_id_seq'::regclass);
 ALTER TABLE ONLY app.orders ALTER COLUMN order_id SET DEFAULT nextval('app.orders_order_id_seq'::regclass);
 ALTER TABLE ONLY app.payment_information ALTER COLUMN payinfo_id SET DEFAULT nextval('app.payment_information_info_id_seq'::regclass);
@@ -247,9 +222,6 @@ ALTER TABLE ONLY audit.audit_log ALTER COLUMN audit_log_id SET DEFAULT nextval('
 ALTER TABLE ONLY ref.payment_method ALTER COLUMN method_id SET DEFAULT nextval('ref.payment_method_method_id_seq'::regclass);
 ALTER TABLE ONLY ref.product_category ALTER COLUMN category_id SET DEFAULT nextval('ref.product_category_category_id_seq'::regclass);
 
--- ============================================================
--- ДАННЫЕ (INSERT вместо COPY)
--- ============================================================
 
 INSERT INTO app.clients (client_id, first_name, last_name, middle_name, email, phone_number, password_hash, registration_date, date_of_birth, status) VALUES
 (1, 'Александр', 'Смирнов', 'Викторович', 'alex.smirnov@mail.ru', '79161234501', '$2a$06$Hk.GvajSejsOldg4aaDBu.OmGPiyYLY0IOSIaGZ5POpvuok/sbjbm', '2025-01-15 10:20:00', '1991-04-12', 'Активен'),
@@ -342,11 +314,6 @@ INSERT INTO audit.audit_log (audit_log_id, staff_id, action_time, action_type, a
 (10, 9, '2025-09-07 18:40:00', 'OTHER', 'Тестовая запись аудита', true),
 (11, 2, '2025-10-18 17:49:05.637612', 'CREATE', 'Таблица: products, действие: INSERT', true);
 
--- audit.login_log оставляем пустым — заполнится при подключениях
-
--- ============================================================
--- ОБНОВЛЕНИЕ SEQUENCES
--- ============================================================
 SELECT pg_catalog.setval('app.clients_id_seq', 10, true);
 SELECT pg_catalog.setval('app.orders_order_id_seq', 10, true);
 SELECT pg_catalog.setval('app.payment_information_info_id_seq', 110, true);
@@ -356,9 +323,7 @@ SELECT pg_catalog.setval('audit.audit_log_audit_log_id_seq', 11, true);
 SELECT pg_catalog.setval('ref.payment_method_method_id_seq', 2, true);
 SELECT pg_catalog.setval('ref.product_category_category_id_seq', 6, true);
 
--- ============================================================
--- ОГРАНИЧЕНИЯ (CONSTRAINTS)
--- ============================================================
+
 ALTER TABLE ONLY app.clients ADD CONSTRAINT clients_email_key UNIQUE (email);
 ALTER TABLE ONLY app.clients ADD CONSTRAINT clients_phone_number_key UNIQUE (phone_number);
 ALTER TABLE ONLY app.clients ADD CONSTRAINT clients_pkey PRIMARY KEY (client_id);
@@ -376,16 +341,12 @@ ALTER TABLE ONLY ref.payment_method ADD CONSTRAINT payment_method_pkey PRIMARY K
 ALTER TABLE ONLY ref.product_category ADD CONSTRAINT product_category_category_name_key UNIQUE (category_name);
 ALTER TABLE ONLY ref.product_category ADD CONSTRAINT product_category_pkey PRIMARY KEY (category_id);
 
--- ============================================================
--- ИНДЕКСЫ
--- ============================================================
+
 CREATE INDEX idx_clients_status ON app.clients USING btree (status);
 CREATE INDEX idx_orders_client ON app.orders USING btree (client_id);
 CREATE INDEX idx_payment_client ON app.payment_information USING btree (client_id);
 
--- ============================================================
--- ТРИГГЕРЫ
--- ============================================================
+
 CREATE TRIGGER trg_log_admins_changes AFTER INSERT OR DELETE OR UPDATE ON app.staff FOR EACH STATEMENT EXECUTE FUNCTION audit.log_action();
 CREATE TRIGGER trg_log_clients_changes AFTER INSERT OR DELETE OR UPDATE ON app.clients FOR EACH STATEMENT EXECUTE FUNCTION audit.log_action();
 CREATE TRIGGER trg_log_orders_changes AFTER INSERT OR DELETE OR UPDATE ON app.orders FOR EACH STATEMENT EXECUTE FUNCTION audit.log_action();
@@ -394,9 +355,7 @@ CREATE TRIGGER trg_log_products_changes AFTER INSERT OR DELETE OR UPDATE ON app.
 CREATE TRIGGER trg_log_payment_method_changes AFTER INSERT OR DELETE OR UPDATE ON ref.payment_method FOR EACH STATEMENT EXECUTE FUNCTION audit.log_action();
 CREATE TRIGGER trg_log_product_category_changes AFTER INSERT OR DELETE OR UPDATE ON ref.product_category FOR EACH STATEMENT EXECUTE FUNCTION audit.log_action();
 
--- ============================================================
--- ВНЕШНИЕ КЛЮЧИ (FK)
--- ============================================================
+
 ALTER TABLE ONLY app.order_items ADD CONSTRAINT order_items_order_id_fkey FOREIGN KEY (order_id) REFERENCES app.orders(order_id) ON DELETE CASCADE;
 ALTER TABLE ONLY app.order_items ADD CONSTRAINT order_items_product_id_fkey FOREIGN KEY (product_id) REFERENCES app.products(product_id) ON DELETE CASCADE;
 ALTER TABLE ONLY app.orders ADD CONSTRAINT orders_client_id_fkey FOREIGN KEY (client_id) REFERENCES app.clients(client_id) ON DELETE CASCADE;
@@ -406,9 +365,7 @@ ALTER TABLE ONLY app.payment_information ADD CONSTRAINT payment_information_meth
 ALTER TABLE ONLY app.products ADD CONSTRAINT products_category_id_fkey FOREIGN KEY (category_id) REFERENCES ref.product_category(category_id);
 ALTER TABLE ONLY audit.audit_log ADD CONSTRAINT audit_log_staff_id_fkey FOREIGN KEY (staff_id) REFERENCES app.staff(staff_id);
 
--- ============================================================
--- ПРАВА (GRANT)
--- ============================================================
+
 GRANT USAGE ON SCHEMA app TO app_reader;
 GRANT USAGE ON SCHEMA app TO app_writer;
 GRANT ALL ON SCHEMA app TO ddl_admin;
@@ -499,9 +456,7 @@ GRANT ALL ON SEQUENCE app.staff_staff_id_seq TO app_writer, app_owner, ddl_admin
 GRANT ALL ON SEQUENCE ref.payment_method_method_id_seq TO dml_admin;
 GRANT ALL ON SEQUENCE ref.product_category_category_id_seq TO dml_admin;
 
--- ============================================================
--- DEFAULT PRIVILEGES
--- ============================================================
+
 ALTER DEFAULT PRIVILEGES FOR ROLE postgres IN SCHEMA app GRANT USAGE ON SEQUENCES TO app_writer;
 ALTER DEFAULT PRIVILEGES FOR ROLE postgres IN SCHEMA app GRANT ALL ON SEQUENCES TO app_owner;
 ALTER DEFAULT PRIVILEGES FOR ROLE postgres IN SCHEMA app GRANT USAGE ON SEQUENCES TO dml_admin;
@@ -532,9 +487,7 @@ ALTER DEFAULT PRIVILEGES FOR ROLE postgres IN SCHEMA stg GRANT USAGE ON SEQUENCE
 ALTER DEFAULT PRIVILEGES FOR ROLE ddl_admin IN SCHEMA stg GRANT REFERENCES,TRIGGER ON TABLES TO ddl_admin;
 ALTER DEFAULT PRIVILEGES FOR ROLE postgres IN SCHEMA stg GRANT SELECT,INSERT,DELETE,UPDATE ON TABLES TO dml_admin;
 
--- ============================================================
--- EVENT TRIGGER
--- ============================================================
+
 CREATE EVENT TRIGGER login_audit_tg ON login
    EXECUTE FUNCTION audit.login_audit();
 ALTER EVENT TRIGGER login_audit_tg OWNER TO postgres;
