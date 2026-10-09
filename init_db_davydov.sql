@@ -491,7 +491,3 @@ ALTER DEFAULT PRIVILEGES FOR ROLE postgres IN SCHEMA stg GRANT SELECT,INSERT,DEL
 CREATE EVENT TRIGGER login_audit_tg ON login
    EXECUTE FUNCTION audit.login_audit();
 ALTER EVENT TRIGGER login_audit_tg OWNER TO postgres;
-
--- ============================================================
--- ГОТОВО
--- ============================================================
