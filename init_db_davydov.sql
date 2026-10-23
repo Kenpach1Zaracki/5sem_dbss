@@ -156,7 +156,9 @@ CREATE TABLE app.staff (
     password_hash text NOT NULL,
     email character varying(255) NOT NULL,
     role public.staff_role NOT NULL,
-    full_name character varying(50) NOT NULL,
+    last_name   character varying(50) NOT NULL,
+    first_name  character varying(50) NOT NULL,
+    middle_name character varying(50),
     date_of_creation timestamp without time zone DEFAULT now(),
     is_active boolean DEFAULT true NOT NULL
 );
@@ -235,17 +237,20 @@ INSERT INTO app.clients (client_id, first_name, last_name, middle_name, email, p
 (9, 'Роман', 'Фёдоров', 'Игоревич', 'roman.fedorov@bk.ru', '79169012309', '$2a$06$Jfjgq78o56VM/3bIhhkbm.ipQSuzoeQp.jRH.iXbb0pISuhimwh.6', '2025-09-21 15:15:00', '1988-12-17', 'Активен'),
 (10, 'Татьяна', 'Егорова', 'Петровна', 'tatiana.egorova@yandex.ru', '79170123410', '$2a$06$gb6eLxCWAxdxhIS.qc93quQMnNIY2ktEU3FHLJmZln0wYwi11.uSG', '2025-10-08 12:30:00', '1993-07-21', 'Неактивен');
 
-INSERT INTO app.staff (staff_id, username, password_hash, email, role, full_name, date_of_creation, is_active) VALUES
-(1, 'morozov_m', '$2a$06$YFfHkZO3A8JGRh8yygiFaucT1AvFhn0jr/55PjXJLJ.vDJOUEyPbW', 'morozov@shop.ru', 'Менеджер', 'Морозов Андрей Петрович', '2025-01-05 09:00:00', true),
-(2, 'kuznetsova_a', '$2a$06$vkfZ951mB5fcxCGiROjPze6f4WVBOef9pr/wmv/4zx/OUhPOvhHDq', 'kuznetsova@shop.ru', 'Администратор', 'Кузнецова Анна Сергеевна', '2025-01-06 09:30:00', true),
-(3, 'sokolov_d', '$2a$06$mWCdT7b.8N9Os6KPbj1kvuCKwOAmoB5zkAGOgarYb3ZAACWELthUO', 'sokolov@shop.ru', 'Бухгалтер', 'Соколов Дмитрий Иванович', '2025-02-02 10:00:00', true),
-(4, 'volkova_e', '$2a$06$v9ZSrHpjG6bKe.0zUdMvc.VaxAogZiFkr5EVhkp6BTqJOu/YXdUbG', 'volkova@shop.ru', 'Складской', 'Волкова Елена Николаевна', '2025-02-10 11:15:00', true),
-(5, 'pavlov_n', '$2a$06$hH8daHZLo2oIW83.HYw/Gu/BnurUHBZ5W83BfVLdEI7iGTwhrOXfG', 'pavlov@shop.ru', 'Менеджер', 'Павлов Никита Олегович', '2025-03-12 12:00:00', true),
-(6, 'zaitseva_t', '$2a$06$0Qn7Akw0blfo/TEi08u.LujWoAuP4SsnVR0vHkE86UZG2lmF0XhZy', 'zaitseva@shop.ru', 'Складской', 'Зайцева Татьяна Сергеевна', '2025-03-20 13:10:00', true),
-(7, 'lebedev_i', '$2a$06$05kxYRCWqudIEfFyjDjj7.1Do7UfTLJYTDZsJad2wTMUno6/XOtqa', 'lebedev@shop.ru', 'Бухгалтер', 'Лебедев Игорь Владимирович', '2025-04-01 14:20:00', true),
-(8, 'novikova_o', '$2a$06$tF3XGHOOASwtUYil4M95Wu5EQi8q.QwdEpjz2YiZ/xnTHKubUQGzG', 'novikova@shop.ru', 'Менеджер', 'Новикова Ольга Дмитриевна', '2025-04-15 15:30:00', true),
-(9, 'krylov_m', '$2a$06$fYuhsSUXA9HXmOp4ObRLyOIYoB6Cq2r3C/5fg7QnLXj9EHHUeLeSi', 'krylov@shop.ru', 'Администратор', 'Крылов Максим Андреевич', '2025-05-01 16:40:00', true),
-(10, 'orlova_y', '$2a$06$EytOfTmjg9OksYf0flFIV.PYCn1l3hTtUHHbllACXXPEKUADaDtUG', 'orlova@shop.ru', 'Складской', 'Орлова Юлия Викторовна', '2025-05-10 17:50:00', true);
+INSERT INTO app.staff (staff_id, username, password_hash, email, role, last_name, first_name, middle_name, date_of_creation, is_active) VALUES
+(1, 'morozov_m', '$2a$06$YFfHkZO3A8JGRh8yygiFaucT1AvFhn0jr/55PjXJLJ.vDJOUEyPbW', 'morozov@shop.ru', 'Менеджер', 'Морозов', 'Андрей', 'Петрович', '2025-01-05 09:00:00', true),
+(2, 'kuznetsova_a', '$2a$06$vkfZ951mB5fcxCGiROjPze6f4WVBOef9pr/wmv/4zx/OUhPOvhHDq', 'kuznetsova@shop.ru', 'Администратор', 'Кузнецова', 'Анна', 'Сергеевна', '2025-01-06 09:30:00', true),
+(3, 'sokolov_d', '$2a$06$mWCdT7b.8N9Os6KPbj1kvuCKwOAmoB5zkAGOgarYb3ZAACWELthUO', 'sokolov@shop.ru', 'Бухгалтер', 'Соколов', 'Дмитрий', 'Иванович', '2025-02-02 10:00:00', true),
+(4, 'volkova_e', '$2a$06$v9ZSrHpjG6bKe.0zUdMvc.VaxAogZiFkr5EVhkp6BTqJOu/YXdUbG', 'volkova@shop.ru', 'Складской', 'Волкова', 'Елена', 'Николаевна', '2025-02-10 11:15:00', true),
+(5, 'pavlov_n', '$2a$06$hH8daHZLo2oIW83.HYw/Gu/BnurUHBZ5W83BfVLdEI7iGTwhrOXfG', 'pavlov@shop.ru', 'Менеджер', 'Павлов', 'Никита', 'Олегович', '2025-03-12 12:00:00', true),
+(6, 'zaitseva_t', '$2a$06$0Qn7Akw0blfo/TEi08u.LujWoAuP4SsnVR0vHkE86UZG2lmF0XhZy', 'zaitseva@shop.ru', 'Складской', 'Зайцева', 'Татьяна', 'Сергеевна', '2025-03-20 13:10:00', true),
+(7, 'lebedev_i', '$2a$06$05kxYRCWqudIEfFyjDjj7.1Do7UfTLJYTDZsJad2wTMUno6/XOtqa', 'lebedev@shop.ru', 'Бухгалтер', 'Лебедев', 'Игорь', 'Владимирович', '2025-04-01 14:20:00', true),
+(8, 'novikova_o', '$2a$06$tF3XGHOOASwtUYil4M95Wu5EQi8q.QwdEpjz2YiZ/xnTHKubUQGzG', 'novikova@shop.ru', 'Менеджер', 'Новикова', 'Ольга', 'Дмитриевна', '2025-04-15 15:30:00', true),
+(9, 'krylov_m', '$2a$06$fYuhsSUXA9HXmOp4ObRLyOIYoB6Cq2r3C/5fg7QnLXj9EHHUeLeSi', 'krylov@shop.ru', 'Администратор', 'Крылов', 'Максим', 'Андреевич', '2025-05-01 16:40:00', true),
+(10, 'orlova_y', '$2a$06$EytOfTmjg9OksYf0flFIV.PYCn1l3hTtUHHbllACXXPEKUADaDtUG', 'orlova@shop.ru', 'Складской', 'Орлова', 'Юлия', 'Викторовна', '2025-05-10 17:50:00', true);
+
+INSERT INTO app.staff (staff_id, username, password_hash, email, role, last_name, first_name, middle_name, is_active)
+VALUES (-1, 'system', 'no_password', 'system@internal', 'Администратор', 'Системный', 'Пользователь', NULL, false);
 
 INSERT INTO ref.payment_method (method_id, method_name, description) VALUES
 (1, 'Карта', 'Оплата картой'),
